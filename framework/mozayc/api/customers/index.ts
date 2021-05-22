@@ -4,20 +4,23 @@ import createApiHandler, {
 } from '../utils/create-api-handler'
 import isAllowedMethod from '../utils/is-allowed-method'
 import { MozaycApiError } from '../utils/errors'
-import login from './handlers/login'
+import getLoggedInCustomer, {
+  Customer,
+} from './handlers/get-logged-in-customer'
 
-export type LoginBody = {
-  email: string
-  password: string
+export type { Customer }
+
+export type CustomerData = {
+  customer: Customer
 }
 
-export type LoginHandlers = {
-  login: MozaycHandler<null, Partial<LoginBody>>
+export type CustomersHandlers = {
+  getLoggedInCustomer: MozaycHandler<CustomerData>
 }
 
-const METHODS = ['POST']
+const METHODS = ['GET']
 
-const loginApi: MozaycApiHandler<null, LoginHandlers> = async (
+const customersApi: MozaycApiHandler<CustomerData, CustomersHandlers> = async (
   req,
   res,
   config,
@@ -26,8 +29,8 @@ const loginApi: MozaycApiHandler<null, LoginHandlers> = async (
   if (!isAllowedMethod(req, res, METHODS)) return
 
   try {
-    const body = req.body ?? {}
-    return await handlers['login']({ req, res, config, body })
+    const body = null
+    return await handlers['getLoggedInCustomer']({ req, res, config, body })
   } catch (error) {
     console.error(error)
 
@@ -40,6 +43,6 @@ const loginApi: MozaycApiHandler<null, LoginHandlers> = async (
   }
 }
 
-const handlers = { login }
+const handlers = { getLoggedInCustomer }
 
-export default createApiHandler(loginApi, handlers, {})
+export default createApiHandler(customersApi, handlers, {})

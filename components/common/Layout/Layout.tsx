@@ -10,7 +10,7 @@ import { Sidebar, Button, Modal, LoadingDots } from '@components/ui'
 import CartSidebarView from '@components/cart/CartSidebarView'
 
 import LoginView from '@components/auth/LoginView'
-import { CommerceProvider } from '@framework'
+import { CommerceProvider } from '../../../framework/mozayc'
 import type { Page } from '@framework/common/get-all-pages'
 
 const Loading = () => (
@@ -49,13 +49,8 @@ const Layout: FC<Props> = ({
   children,
   pageProps: { commerceFeatures, ...pageProps },
 }) => {
-  const {
-    displaySidebar,
-    displayModal,
-    closeSidebar,
-    closeModal,
-    modalView,
-  } = useUI()
+  const { displaySidebar, displayModal, closeSidebar, closeModal, modalView } =
+    useUI()
   const { acceptedCookies, onAcceptCookies } = useAcceptCookies()
   const { locale = 'en-US' } = useRouter()
   return (
