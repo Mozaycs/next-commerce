@@ -4,20 +4,22 @@ import createApiHandler, {
 } from '../utils/create-api-handler'
 import isAllowedMethod from '../utils/is-allowed-method'
 import { MozaycApiError } from '../utils/errors'
-import login from './handlers/login'
+import signup from './handlers/signup'
 
-export type LoginBody = {
+export type SignupBody = {
+  firstName: string
+  lastName: string
   email: string
   password: string
 }
 
-export type LoginHandlers = {
-  login: MozaycHandler<null, Partial<LoginBody>>
+export type SignupHandlers = {
+  signup: MozaycHandler<null, { cartId?: string } & Partial<SignupBody>>
 }
 
 const METHODS = ['POST']
 
-const loginApi: MozaycApiHandler<null, LoginHandlers> = async (
+const signupApi: MozaycApiHandler<null, SignupHandlers> = async (
   req,
   res,
   config,
@@ -25,9 +27,12 @@ const loginApi: MozaycApiHandler<null, LoginHandlers> = async (
 ) => {
   if (!isAllowedMethod(req, res, METHODS)) return
 
+  const { cookies } = req
+  const cartId = cookies[config.cartCookie]
+
   try {
-    const body = req.body ?? {}
-    return await handlers['login']({ req, res, config, body })
+    const body = { ...req.body, cartId }
+    return await handlers['signup']({ req, res, config, body })
   } catch (error) {
     console.error(error)
 
@@ -40,6 +45,6 @@ const loginApi: MozaycApiHandler<null, LoginHandlers> = async (
   }
 }
 
-const handlers = { login }
+const handlers = { signup }
 
-export default createApiHandler(loginApi, handlers, {})
+export default createApiHandler(signupApi, handlers, {})

@@ -4,20 +4,15 @@ import createApiHandler, {
 } from '../utils/create-api-handler'
 import isAllowedMethod from '../utils/is-allowed-method'
 import { MozaycApiError } from '../utils/errors'
-import login from './handlers/login'
+import logout from './handlers/logout'
 
-export type LoginBody = {
-  email: string
-  password: string
+export type LogoutHandlers = {
+  logout: MozaycHandler<null, { redirectTo?: string }>
 }
 
-export type LoginHandlers = {
-  login: MozaycHandler<null, Partial<LoginBody>>
-}
+const METHODS = ['GET']
 
-const METHODS = ['POST']
-
-const loginApi: MozaycApiHandler<null, LoginHandlers> = async (
+const logoutApi: MozaycApiHandler<null, LogoutHandlers> = async (
   req,
   res,
   config,
@@ -26,8 +21,10 @@ const loginApi: MozaycApiHandler<null, LoginHandlers> = async (
   if (!isAllowedMethod(req, res, METHODS)) return
 
   try {
-    const body = req.body ?? {}
-    return await handlers['login']({ req, res, config, body })
+    const redirectTo = req.query.redirect_to
+    const body = typeof redirectTo === 'string' ? { redirectTo } : {}
+
+    return await handlers['logout']({ req, res, config, body })
   } catch (error) {
     console.error(error)
 
@@ -40,6 +37,6 @@ const loginApi: MozaycApiHandler<null, LoginHandlers> = async (
   }
 }
 
-const handlers = { login }
+const handlers = { logout }
 
-export default createApiHandler(loginApi, handlers, {})
+export default createApiHandler(logoutApi, handlers, {})

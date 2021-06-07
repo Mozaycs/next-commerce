@@ -1,23 +1,22 @@
 import type { RequestInit } from '@vercel/fetch'
 import type { CommerceAPIConfig } from '@commerce/api'
-// import fetchGraphqlApi from './utils/fetch-graphql-api'
-// import fetchStoreApi from './utils/fetch-store-api'
+import fetchStoreApi from './utils/fetch-store-api'
 
-export interface BigcommerceConfig extends CommerceAPIConfig {
+export interface MozaycConfig extends CommerceAPIConfig {
   // Indicates if the returned metadata with translations should be applied to the
   // data or returned as it is
-  applyLocale?: boolean
+  applyLocale?: string
+  commerceUrl: string
   storeApiUrl: string
   storeApiToken: string
-  storeApiClientId: string
   storeChannelId?: string
   storeApiFetch<T>(endpoint: string, options?: RequestInit): Promise<T>
 }
 
-const API_URL = process.env.MOZAY_API_URL
+const API_URL = process.env.MOZAYC_API_URL
 
 export class Config {
-  private config: BigcommerceConfig
+  private config: MozaycConfig
 
   constructor(config: any) {
     this.config = {
@@ -28,14 +27,14 @@ export class Config {
     }
   }
 
-  getConfig(userConfig: Partial<BigcommerceConfig> = {}) {
-    return Object.entries(userConfig).reduce<BigcommerceConfig>(
+  getConfig(userConfig: Partial<MozaycConfig> = {}) {
+    return Object.entries(userConfig).reduce<MozaycConfig>(
       (cfg, [key, value]) => Object.assign(cfg, { [key]: value }),
       { ...this.config }
     )
   }
 
-  setConfig(newConfig: Partial<BigcommerceConfig>) {
+  setConfig(newConfig: Partial<MozaycConfig>) {
     Object.assign(this.config, newConfig)
   }
 }
@@ -43,12 +42,15 @@ export class Config {
 const ONE_DAY = 60 * 60 * 24
 const config = new Config({
   commerceUrl: API_URL,
+  storeApiUrl: API_URL,
+  storeApiToken: '',
+  storeApiFetch: fetchStoreApi,
 })
 
-export function getConfig(userConfig?: Partial<BigcommerceConfig>) {
+export function getConfig(userConfig?: Partial<MozaycConfig>) {
   return config.getConfig(userConfig)
 }
 
-export function setConfig(newConfig: Partial<BigcommerceConfig>) {
+export function setConfig(newConfig: Partial<MozaycConfig>) {
   return config.setConfig(newConfig)
 }
