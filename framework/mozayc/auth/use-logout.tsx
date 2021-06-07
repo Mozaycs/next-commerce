@@ -17,9 +17,9 @@ export const handler: MutationHook<null> = {
 
       return useCallback(
         async function logout() {
-          const data = await fetch()
+          //const data = await fetch()
           await mutate(null, false)
-          return data
+          return null
         },
         [fetch, mutate]
       )

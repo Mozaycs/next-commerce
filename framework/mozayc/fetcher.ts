@@ -23,7 +23,6 @@ const fetcher: Fetcher = async ({
   variables,
   body: bodyObj,
 }) => {
-  console.log('URL', process.env.MOZAYC_API_URL)
   const hasBody = Boolean(variables || bodyObj)
   const body = hasBody
     ? JSON.stringify(variables ? { variables } : bodyObj)
@@ -36,7 +35,7 @@ const fetcher: Fetcher = async ({
   })
 
   if (res.ok) {
-    const { data } = await res.json()
+    const data = await res.json()
     return data
   }
 

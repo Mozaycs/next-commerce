@@ -3,6 +3,7 @@ import type { MutationHook } from '@commerce/utils/types'
 import { CommerceError } from '@commerce/utils/errors'
 import useLogin, { UseLogin } from '@commerce/auth/use-login'
 import useCustomer from '../customer/use-customer'
+import useLoginMapper from '../mapper/use-login-mapper'
 
 export default useLogin as UseLogin<typeof handler>
 
@@ -17,7 +18,6 @@ export const handler: MutationHook<null, {}, LoginBody> = {
     method: 'POST',
   },
   async fetcher({ input: { email, password }, options, fetch }) {
-    console.log('Login Mozyc', options)
     if (!(email && password)) {
       throw new CommerceError({
         message: 'An email and password are required to login',
@@ -38,7 +38,7 @@ export const handler: MutationHook<null, {}, LoginBody> = {
         async function login(input) {
           const data = await fetch({ input })
           await revalidate()
-          return data
+          return useLoginMapper(data)
         },
         [fetch, revalidate]
       )
