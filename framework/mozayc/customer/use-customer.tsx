@@ -1,8 +1,14 @@
 import { SWRHook } from '@commerce/utils/types'
 import useCustomer, { UseCustomer } from '@commerce/customer/use-customer'
 import type { GetLoggedInCustomerQuery } from '../schema'
+import useCustomerMapper from '../mapper/use-customer-mapper'
 
-type Customer = NonNullable<GetLoggedInCustomerQuery['customer']>
+type Customer = {
+  email: string
+  name: string
+  userType: string
+  _id: number
+}
 
 type CustomerData = {
   customer: Customer
@@ -17,7 +23,7 @@ export const handler: SWRHook<Customer | null> = {
   },
   async fetcher({ options, fetch }) {
     const data = await fetch<CustomerData | null>(options)
-    return data?.customer ?? null
+    return useCustomerMapper(data)
   },
   useHook:
     ({ useData }) =>
